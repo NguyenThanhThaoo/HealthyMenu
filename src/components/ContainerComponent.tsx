@@ -10,7 +10,7 @@ import React, {ReactNode} from 'react';
 import {globalStyles} from '../styles/globalStyles';
 import {useNavigation} from '@react-navigation/native';
 import {ButtonComponent, TextComponent} from '.';
-import {ArrowLeft} from 'iconsax-react-native';
+import {ArrowLeft2} from 'iconsax-react-native';
 import {appColors} from '../constants/appColors';
 import {fontFamilies} from '../constants/fontFamilies';
 import RowComponent from './RowComponent';
@@ -29,7 +29,7 @@ const ContainerComponent = (props: Props) => {
 
   const headerComponent = () => {
     return (
-      <View style={{flex: 1, paddingTop: 30}}>
+      <View style={{flex: 1, paddingTop: 55}}>
         {(title || back) && (
           <RowComponent
             styles={{
@@ -43,7 +43,7 @@ const ContainerComponent = (props: Props) => {
               <TouchableOpacity
                 onPress={() => navigation.goBack()}
                 style={{marginRight: 12}}>
-                <ArrowLeft size={24} color={appColors.text} />
+                <ArrowLeft2 size={24} color={appColors.text} />
               </TouchableOpacity>
             )}
             {title ? (

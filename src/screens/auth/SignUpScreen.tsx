@@ -11,12 +11,11 @@ import {
   TextComponent,
 } from '../../components';
 import { appColors } from '../../constants/appColors';
-// import {LoadingModal} from '../../modals';
-// import {Validate} from '../../utils/validate';
-import SocialLogin from './components/SocialLogin';
+import {authApi} from '../../apis/authenticationApi';
 // import authenticationAPI from '../../apis/authApi';
 
-import { Alert, Image, Switch } from 'react-native';
+import { Alert, Image, Switch, SafeAreaView, View } from 'react-native';
+import { Validate } from '../../utils/validate';
 
 // interface ErrorMessages {
 //   email: string;
@@ -33,29 +32,29 @@ const initValue = {
 
 const SignUpScreen = ({ navigation }: any) => {
   const [values, setValues] = useState(initValue);
-  // const [isLoading, setIsLoading] = useState(false);
-  // const [errorMessage, setErrorMessage] = useState<any>();
-  // const [isDisable, setIsDisable] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
+  const [errorMessage, setErrorMessage] = useState<any>();
+  const [isDisable, setIsDisable] = useState(true);
 
 
   // const dispatch = useDispatch();
 
-  // useEffect(() => {
-  //   if (
-  //     !errorMessage ||
-  //     (errorMessage &&
-  //       (errorMessage.email ||
-  //         errorMessage.password ||
-  //         errorMessage.confirmPassword)) ||
-  //     !values.email ||
-  //     !values.password ||
-  //     !values.confirmPassword
-  //   ) {
-  //     setIsDisable(true);
-  //   } else {
-  //     setIsDisable(false);
-  //   }
-  // }, [errorMessage, values]);
+  useEffect(() => {
+    if (
+      !errorMessage ||
+      (errorMessage &&
+        (errorMessage.email ||
+          errorMessage.password ||
+          errorMessage.confirmPassword)) ||
+      !values.email ||
+      !values.password ||
+      !values.confirmPassword
+    ) {
+      setIsDisable(true);
+    } else {
+      setIsDisable(false);
+    }
+  }, [errorMessage, values]);
 
   const handleChangeValue = (key: string, value: string) => {
     const data: any = { ...values };
@@ -65,221 +64,225 @@ const SignUpScreen = ({ navigation }: any) => {
     setValues(data);
   };
 
-  // const formValidator = (key: string) => {
-  //   const data = {...errorMessage};
-  //   let message = ``;
+  const formValidator = (key: string) => {
+    const data = {...errorMessage};
+    let message = ``;
 
-  //   switch (key) {
-  //     case 'email':
-  //       if (!values.email) {
-  //         message = `Email is required!!!`;
-  //       } else if (!Validate.email(values.email)) {
-  //         message = 'Email is not invalid!!';
-  //       } else {
-  //         message = '';
-  //       }
+    switch (key) {
+      case 'email':
+        if (!values.email) {
+          message = `Email không được bỏ trống!!!`;
+        } else if (!Validate.email(values.email)) {
+          message = 'Email không hợp lệ!!';
+        } else {
+          message = '';
+        }
 
-  //       break;
+        break;
 
-  //     case 'password':
-  //       message = !values.password ? `Password is required!!!` : '';
-  //       break;
+      case 'password':
+        message = !values.password ? `Mật khẩu không được bỏ trống!!!` : '';
+        break;
 
-  //     case 'confirmPassword':
-  //       if (!values.confirmPassword) {
-  //         message = `Please type confirm password!!`;
-  //       } else if (values.confirmPassword !== values.password) {
-  //         message = 'Password is not match!!!';
-  //       } else {
-  //         message = '';
-  //       }
+      case 'confirmPassword':
+        if (!values.confirmPassword) {
+          message = `Vui lòng xác nhận mật khẩu!!`;
+        } else if (values.confirmPassword !== values.password) {
+          message = 'Mật khẩu không trùng khớp!!!';
+        } else {
+          message = '';
+        }
 
-  //       break;
-  //   }
+        break;
+    }
 
-  //   data[`${key}`] = message;
+    data[`${key}`] = message;
 
-  //   setErrorMessage(data);
-  // };
+    setErrorMessage(data);
+  };
 
-  // const handleRegister = async () => {
-  //   const api = `/verification`;
-  //   setIsLoading(true);
-  //   try {
-  //     const res = await authenticationAPI.HandleAuthentication(
-  //       api,
-  //       {email: values.email},
-  //       'post',
-  //     );
+  const handleRegister = async () => {
+    // const api = `/verification`;
+    setIsLoading(true);
+    try {
+      const res = await authApi.register(
+        {email: values.email,password:values.password},
+      );
 
-  //     setIsLoading(false);
-
-  //     navigation.navigate('Verification', {
-  //       code: res.data.code,
-  //       ...values,
-  //     });
-  //   } catch (error) {
-  //     console.log(error);
-  //     setIsLoading(false);
-  //   }
-  // };
-
-  //   return (
-  //     <>
-  //       <ContainerComponent isImageBackground isScroll back>
-  //         <SectionComponent>
-  //           <TextComponent size={24} title text="Sign up" />
-  //           <SpaceComponent height={21} />
-  //           <InputComponent
-  //             value={values.username}
-  //             placeholder="Full name"
-  //             onChange={val => handleChangeValue('username', val)}
-  //             allowClear
-  //             affix={<User size={22} color={appColors.gray} />}
-  //           />
-  //           <InputComponent
-  //             value={values.email}
-  //             placeholder="abc@email.com"
-  //             onChange={val => handleChangeValue('email', val)}
-  //             allowClear
-  //             affix={<Sms size={22} color={appColors.gray} />}
-  //             onEnd={() => formValidator('email')}
-  //           />
-  //           <InputComponent
-  //             value={values.password}
-  //             placeholder="Password"
-  //             onChange={val => handleChangeValue('password', val)}
-  //             isPassword
-  //             allowClear
-  //             affix={<Lock size={22} color={appColors.gray} />}
-  //             onEnd={() => formValidator('password')}
-  //           />
-  //           <InputComponent
-  //             value={values.confirmPassword}
-  //             placeholder="Confirm password"
-  //             onChange={val => handleChangeValue('confirmPassword', val)}
-  //             isPassword
-  //             allowClear
-  //             affix={<Lock size={22} color={appColors.gray} />}
-  //             onEnd={() => formValidator('confirmPassword')}
-  //           />
-  //         </SectionComponent>
-
-  //         {errorMessage && (
-  //           <SectionComponent>
-  //             {Object.keys(errorMessage).map(
-  //               (error, index) =>
-  //                 errorMessage[`${error}`] && (
-  //                   <TextComponent
-  //                     text={errorMessage[`${error}`]}
-  //                     key={`error${index}`}
-  //                     color={appColors.danger}
-  //                   />
-  //                 ),
-  //             )}
-  //           </SectionComponent>
-  //         )}
-  //         <SpaceComponent height={16} />
-  //         <SectionComponent>
-  //           <ButtonComponent
-  //             onPress={handleRegister}
-  //             text="SIGN UP"
-  //             disable={isDisable}
-  //             type="primary"
-  //           />
-  //         </SectionComponent>
-  //         <SocialLogin />
-  //         <SectionComponent>
-  //           <RowComponent justify="center">
-  //             <TextComponent text="Don’t have an account? " />
-  //             <ButtonComponent
-  //               type="link"
-  //               text="Sign in"
-  //               onPress={() => navigation.navigate('LoginScreen')}
-  //             />
-  //           </RowComponent>
-  //         </SectionComponent>
-  //       </ContainerComponent>
-  //       <LoadingModal visible={isLoading} />
-  //     </>
-  //   );
-  // };
-
-
-  return (
-    <ContainerComponent isImageBackground isScroll title="" back>
-      <SectionComponent>
-        <TextComponent size={24} title text="Sign up" />
-        <SpaceComponent height={21} />
-        <InputComponent
-          value={values.username}
-          placeholder="Full name"
-          onChange={val => handleChangeValue('username', val)}
-          allowClear
-          affix={<User size={22} color={appColors.gray} />}
-        />
-        <InputComponent
-          value={values.email}
-          placeholder="abc@email.com"
-          onChange={val => handleChangeValue('email', val)}
-          allowClear
-          affix={<Sms size={22} color={appColors.gray} />}
-          // onEnd={() => formValidator('email')}
-        />
-        <InputComponent
-          value={values.password}
-          placeholder="Password"
-          onChange={val => handleChangeValue('password', val)}
-          isPassword
-          allowClear
-          affix={<Lock size={22} color={appColors.gray} />}
-          // onEnd={() => formValidator('password')}
-        />
-        <InputComponent
-          value={values.confirmPassword}
-          placeholder="Confirm password"
-          onChange={val => handleChangeValue('confirmPassword', val)}
-          isPassword
-          allowClear
-          affix={<Lock size={22} color={appColors.gray} />}
-          // onEnd={() => formValidator('confirmPassword')}
-        />
-        <RowComponent justify="space-between">
-          {/* <RowComponent onPress={() => setIsRemember(!isRemember)}>
-            <Switch
-              trackColor={{ false: appColors.gray, true: appColors.primary }}
-              thumbColor={appColors.white2}
-              value={isRemember}
-              onChange={() => setIsRemember(!isRemember)}
-            />
-            <SpaceComponent width={4} />
-            <TextComponent text="Remember me" />
-          </RowComponent> */}
-          <ButtonComponent
-            text="Forgot Password?"
-            onPress={() => navigation.navigate('ForgotPassword')}
-            type="text"
-          />
-        </RowComponent>
-      </SectionComponent>
-      <SpaceComponent height={16} />
-      <SectionComponent>
-        <ButtonComponent text="SIGN UP" type="primary" />
-      </SectionComponent>
-      <SocialLogin />
-      <SectionComponent>
-        <RowComponent justify="center">
-          <TextComponent text="Don’t have an account? " />
-          <ButtonComponent
-            type="link"
-            text="Sign up"
-            onPress={() => navigation.navigate('SignUpScreen')}
-          />
-        </RowComponent>
-      </SectionComponent>
-    </ContainerComponent>
-  );
+      setIsLoading(false);
+    if (res?.data && res.status == 200) {
+      Alert.alert(
+        'Thành công',
+        'Bạn đã đăng ký thành công!',
+        [
+          {
+            text: 'OK',
+            onPress: () => navigation.navigate('Login'),
+          },
+        ],
+        { cancelable: false }
+      );
+    }
+  } catch (error) {
+    console.log(error);
+    Alert.alert('Thất bại', 'Đăng ký không thành công. Vui lòng thử lại!');
+    setIsLoading(false);
+  }
 };
 
+    return (
+        <ContainerComponent isImageBackground isScroll>
+          <SectionComponent>
+            <TextComponent size={24} title text="Đăng ký" />
+            <SpaceComponent height={21} />
+            <InputComponent
+              value={values.username}
+              placeholder="Họ tên"
+              onChange={val => handleChangeValue('username', val)}
+              allowClear
+              affix={<User size={22} color={appColors.gray} />}
+            />
+            <InputComponent
+              value={values.email}
+              placeholder="abc@email.com"
+              onChange={val => handleChangeValue('email', val)}
+              allowClear
+              affix={<Sms size={22} color={appColors.gray} />}
+              onEnd={() => formValidator('email')}
+            />
+            <InputComponent
+              value={values.password}
+              placeholder="Mật khẩu"
+              onChange={val => handleChangeValue('password', val)}
+              isPassword
+              allowClear
+              affix={<Lock size={22} color={appColors.gray} />}
+              onEnd={() => formValidator('password')}
+            />
+            <InputComponent
+              value={values.confirmPassword}
+              placeholder="Xác nhận mật khẩu"
+              onChange={val => handleChangeValue('confirmPassword', val)}
+              isPassword
+              allowClear
+              affix={<Lock size={22} color={appColors.gray} />}
+              onEnd={() => formValidator('confirmPassword')}
+            />
+          </SectionComponent>
 
+          {errorMessage && (
+            <SectionComponent>
+              {Object.keys(errorMessage).map(
+                (error, index) =>
+                  errorMessage[`${error}`] && (
+                    <TextComponent
+                      text={errorMessage[`${error}`]}
+                      key={`error${index}`}
+                      color={appColors.danger}
+                    />
+                  ),
+              )}
+            </SectionComponent>
+          )}
+          <SpaceComponent height={16} />
+          <SectionComponent>
+            <ButtonComponent
+              onPress={handleRegister}
+              text="Đăng ký"
+              disable={isDisable}
+              type="primary"
+            />
+          </SectionComponent>
+          <SectionComponent>
+            <RowComponent justify="center">
+              <TextComponent text="Bạn đã có tài khoản? " />
+              <ButtonComponent
+                type="link"
+                text="Đăng nhập"
+                onPress={() => navigation.navigate('Login')}
+              />
+            </RowComponent>
+          </SectionComponent>
+        </ContainerComponent>
+
+    );
+  };
 export default SignUpScreen;
+
+//   return (
+//     <ContainerComponent isImageBackground isScroll title="" back>
+//       <SectionComponent>
+//         <TextComponent size={24} title text="Sign up" />
+//         <SpaceComponent height={21} />
+//         <InputComponent
+//           value={values.username}
+//           placeholder="Full name"
+//           onChange={val => handleChangeValue('username', val)}
+//           allowClear
+//           affix={<User size={22} color={appColors.gray} />}
+//         />
+//         <InputComponent
+//           value={values.email}
+//           placeholder="abc@email.com"
+//           onChange={val => handleChangeValue('email', val)}
+//           allowClear
+//           affix={<Sms size={22} color={appColors.gray} />}
+//           // onEnd={() => formValidator('email')}
+//         />
+//         <InputComponent
+//           value={values.password}
+//           placeholder="Password"
+//           onChange={val => handleChangeValue('password', val)}
+//           isPassword
+//           allowClear
+//           affix={<Lock size={22} color={appColors.gray} />}
+//           // onEnd={() => formValidator('password')}
+//         />
+//         <InputComponent
+//           value={values.confirmPassword}
+//           placeholder="Confirm password"
+//           onChange={val => handleChangeValue('confirmPassword', val)}
+//           isPassword
+//           allowClear
+//           affix={<Lock size={22} color={appColors.gray} />}
+//           // onEnd={() => formValidator('confirmPassword')}
+//         />
+//         <RowComponent justify="space-between">
+//           {/* <RowComponent onPress={() => setIsRemember(!isRemember)}>
+//             <Switch
+//               trackColor={{ false: appColors.gray, true: appColors.primary }}
+//               thumbColor={appColors.white2}
+//               value={isRemember}
+//               onChange={() => setIsRemember(!isRemember)}
+//             />
+//             <SpaceComponent width={4} />
+//             <TextComponent text="Remember me" />
+//           </RowComponent> */}
+//           <ButtonComponent
+//             text="Forgot Password?"
+//             onPress={() => navigation.navigate('ForgotPassword')}
+//             type="text"
+//           />
+//         </RowComponent>
+//       </SectionComponent>
+//       <SpaceComponent height={16} />
+//       <SectionComponent>
+//         <ButtonComponent text="SIGN UP" type="primary" onPress={()=>handleRegister()}/>
+//       </SectionComponent>
+//       {/* <SocialLogin /> */}
+//       <SectionComponent>
+//         <RowComponent justify="center">
+//           <TextComponent text="Already have an account? " />
+//           <ButtonComponent
+//             type="link"
+//             text="Login"
+//             onPress={() => navigation.navigate('Login')}
+//           />
+//         </RowComponent>
+//       </SectionComponent>
+//     </ContainerComponent>
+//   );
+// };
+
+
+

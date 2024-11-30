@@ -55,6 +55,9 @@ const ButtonComponent = (props: Props) => {
               // : disable
               // ? appColors.gray5
               // : appColors.primary,
+            flexDirection: 'row', // Đặt các phần tử theo hàng ngang
+            alignItems: 'center', // Căn giữa theo chiều dọc
+            justifyContent: 'center', // Căn giữa nội dung
             marginBottom: 17,
             width: '90%',
           },
